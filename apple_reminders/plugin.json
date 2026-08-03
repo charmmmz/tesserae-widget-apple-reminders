@@ -1,0 +1,99 @@
+{
+  "tesserae_compat": "1.x",
+  "name": "Apple Reminders",
+  "version": "0.1.0",
+  "kind": "widget",
+  "requires": [],
+  "description": "Render one user-approved Apple Reminders list from the latest expiring Companion snapshot. Choose a list and a Tasks, Food, Shopping, or Custom presentation; the widget never reads Apple data directly and makes no network requests.",
+  "icon": "ph-list-checks",
+  "supports": {
+    "sizes": ["xs", "sm", "md", "lg"]
+  },
+  "cell_options": [
+    {
+      "name": "list_id",
+      "type": "select",
+      "label": "Reminders list",
+      "choices_from": "lists"
+    },
+    {
+      "name": "preset",
+      "type": "select",
+      "label": "Presentation",
+      "default": "tasks",
+      "choices": [
+        { "value": "tasks", "label": "Tasks" },
+        { "value": "food", "label": "Food" },
+        { "value": "shopping", "label": "Shopping" },
+        { "value": "custom", "label": "Custom" }
+      ]
+    },
+    {
+      "name": "title",
+      "type": "string",
+      "label": "Custom title (blank = preset/list)"
+    },
+    {
+      "name": "count_label",
+      "type": "string",
+      "label": "Custom count label (blank = preset)"
+    },
+    {
+      "name": "max_items",
+      "type": "number",
+      "label": "Max items shown (0 = all)",
+      "default": 0
+    },
+    {
+      "name": "due_style",
+      "type": "select",
+      "label": "Due dates",
+      "default": "preset",
+      "choices": [
+        { "value": "preset", "label": "Use presentation default" },
+        { "value": "friendly", "label": "Friendly labels" },
+        { "value": "relative", "label": "Relative days (-2d, 0d, 3d)" },
+        { "value": "hidden", "label": "Hidden" }
+      ]
+    },
+    {
+      "name": "urgency_style",
+      "type": "select",
+      "label": "Urgency marks",
+      "default": "preset",
+      "choices": [
+        { "value": "preset", "label": "Use presentation default" },
+        { "value": "color", "label": "Color-coded" },
+        { "value": "quiet", "label": "Quiet" }
+      ]
+    },
+    {
+      "name": "columns",
+      "type": "select",
+      "label": "Columns",
+      "default": "auto",
+      "choices": [
+        { "value": "auto", "label": "Auto (two after 5 items)" },
+        { "value": "one", "label": "One" },
+        { "value": "two", "label": "Two" }
+      ]
+    },
+    {
+      "name": "accent",
+      "type": "select",
+      "label": "Accent",
+      "default": "accent-1",
+      "choices": [
+        { "value": "accent-1", "label": "Terracotta" },
+        { "value": "accent-2", "label": "Ochre" },
+        { "value": "accent-4", "label": "Teal" },
+        { "value": "accent-5", "label": "Slate blue" },
+        { "value": "accent-6", "label": "Plum" }
+      ]
+    }
+  ],
+  "render": {
+    "dither": "none",
+    "needs_network": false
+  }
+}

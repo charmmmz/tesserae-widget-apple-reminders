@@ -1,0 +1,17 @@
+Apple Reminders widget for Tesserae
+
+Original work Copyright (C) 2026 Kayden D'Mello
+Modifications Copyright (C) 2026 Charm
+
+Derived from "Reminders, Fridge" by Kayden D'Mello, originally published at:
+https://github.com/dmellok/tesserae-widget-reminders-fridge
+
+Source revision used as the base:
+89edb0e1583dc53e1ca305325f072632baeac402
+
+Charm began modifying the original work on 2026-08-03. This derivative is a
+separately named widget with a different data contract. It does not replace or
+migrate installations of the original widget.
+
+The original and modified work are licensed under the GNU Affero General
+Public License, version 3 or (at your option) any later version. See LICENSE.

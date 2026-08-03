@@ -1,51 +1,70 @@
-# Reminders, Fridge widget for Tesserae
+# Apple Reminders widget for Tesserae
 
-A fridge grocery list from your iPhone. The Tesserae Companion app publishes one
-chosen Apple Reminders list (incomplete items only) to your server as a minimal,
-expiring snapshot; this widget renders it as a framed checklist with the item
-count as the hero.
+A general Apple Reminders widget backed by Tesserae Companion's private,
+expiring multi-list snapshot. Choose any list the iPhone has explicitly
+published, then present it as Tasks, Food, Shopping, or a custom checklist.
 
-Drop into [Tesserae](https://github.com/dmellok/tesserae) via Settings → Widgets
-→ Browse community widgets.
+This repository is derived from Kayden D'Mello's
+[Reminders, Fridge](https://github.com/dmellok/tesserae-widget-reminders-fridge)
+widget and keeps its framed, count-first visual language. The original Git
+history is retained; see `NOTICE` for the exact attribution, source revision,
+and modification date.
 
-## Folders shipped
+This is a separate widget rather than an in-place upgrade. It reads only the
+generic `reminders` source, does not fall back to `reminders.fridge`, and does
+not migrate existing Reminders, Fridge cells. The published fridge widget can
+remain installed for servers that still carry the deprecated one-list source.
 
-- `reminders_fridge`
+## Folder shipped
 
-## What you see
+- `apple_reminders`
 
-- A bold **count block** (items left to buy) as the hero, in your chosen accent.
-- The list **title** and a freshness badge (Fresh / Stale, with a relative
-  "2h ago", or Expired).
-- A **checkbox row** per item: high-priority items get a filled box, and each
-  item shows a compact due tag (Today / Tmrw / a weekday / a date), with
-  due-today and overdue tags picked out in the accent.
-- Calm empty, stale (dimmed), and expired states when there is no live snapshot.
-- On the Panels canvas, a `value` fragment renders just the count.
+## Presentation presets
 
-The layout adapts down to small cells: on tight cells the due tags and the "To
-buy" label drop so the count and item names hold.
+- **Tasks** — list title, “To do”, friendly due labels, quiet urgency.
+- **Food** — `FOODIE`, “To eat”, relative dates such as `-2d`, `0d`, and `3d`,
+  urgency colors, and automatic two-column layout after five visible items.
+- **Shopping** — list title, “To buy”, friendly due labels.
+- **Custom** — neutral defaults intended for title, label, date, urgency, and
+  layout overrides.
+
+All presets sort dated items first, then undated items. High-priority items use
+a filled checkbox. Fresh, stale, expired, missing-snapshot, and missing-list
+states are distinct, so a deleted or unshared list never silently changes to a
+different one.
 
 ## Configuration
 
-Per-cell options:
+Per-cell options include:
 
-- `title` — list title (blank shows "Fridge")
-- `max_items` — cap the rows shown; the count still reflects the full list
-  (0 = show all)
-- `accent` — Terracotta / Ochre / Teal / Slate blue / Plum
+- uploaded Reminders list;
+- presentation preset;
+- custom title and count label;
+- maximum visible items;
+- friendly, relative, or hidden due dates;
+- color-coded or quiet urgency marks;
+- automatic, one-column, or two-column layout;
+- Tesserae accent color.
 
-## How the data gets there
+The dynamic list picker is populated from the latest `reminders` snapshot. If
+it is empty, the enabled source may currently publish no lists. The widget
+keeps its configured list instead of silently falling back and shows the
+selected-list-unavailable state until that list is published again or another
+one is explicitly chosen.
 
-This widget is read-only. The **Companion app** owns the data: it publishes the
-selected Apple Reminders list to your Tesserae server's personal-data bridge as
-an expiring snapshot, and the widget reads the latest one. Nothing leaves the
-phone except the selected list, and the snapshot is deleted when you turn the
-source off or it expires.
+## Privacy and data flow
 
-Needs the Companion app paired, with the personal-data source enabled. No admin
-page and no network access of its own: the data's authority is the phone.
+The widget is read-only and has no network access. The iPhone remains the data
+authority and uploads only incomplete items from lists the user selected. Each
+list uses an app-generated publication UUID rather than its EventKit calendar
+identifier. Tesserae retains only the latest raw snapshot until its required
+expiry or explicit deletion; ordinary rendered History thumbnails follow the
+server's existing render-cache lifetime.
+
+Requires a Tesserae Server advertising `reminders` in
+`personal_data.sources` and a paired Tesserae Companion build that can publish
+it. The legacy `personal_data_reminders` feature flag alone is not sufficient.
 
 ## License
 
-AGPL-3.0-or-later, matching Tesserae.
+AGPL-3.0-or-later, matching Tesserae and the original widget.
