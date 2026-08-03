@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-08-03
+
 ### Added
 
 - Dynamic selection of any Apple Reminders list uploaded in Companion's latest
@@ -31,4 +33,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   documentation coverage: the widget preserves its configured selection and
   shows it as unavailable rather than switching lists.
 
-[Unreleased]: https://github.com/charmmmz/tesserae-widget-apple-reminders/commits/main
+[Unreleased]: https://github.com/charmmmz/tesserae-widget-apple-reminders/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/charmmmz/tesserae-widget-apple-reminders/releases/tag/v0.2.0
