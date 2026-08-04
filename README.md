@@ -52,6 +52,12 @@ keeps its configured list instead of silently falling back and shows the
 selected-list-unavailable state until that list is published again or another
 one is explicitly chosen.
 
+On compatible servers, each placement can independently enable **Refresh when
+this widget's data changes**. The dependency is narrowed to that placement's
+selected list, so changing Grocery List does not refresh a dashboard showing a
+different Reminders list, and the same widget on another dashboard remains off
+unless explicitly enabled there too.
+
 ## Privacy and data flow
 
 The widget is read-only and has no network access. The iPhone remains the data

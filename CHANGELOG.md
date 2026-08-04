@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- Opt-in change-driven refresh support for each widget placement, narrowed to
+  its selected Reminders `list_id` on compatible Tesserae servers.
+
 ## [0.2.0] - 2026-08-03
 
 ### Added

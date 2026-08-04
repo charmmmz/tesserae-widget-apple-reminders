@@ -6,8 +6,10 @@ modified by Charm beginning 2026-08-03. AGPL-3.0-or-later.
 
 from __future__ import annotations
 
+import json
 import time
 from datetime import date, timedelta
+from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
 
@@ -40,6 +42,16 @@ def _list(list_id: str, title: str, items: list[dict[str, Any]]) -> dict[str, An
 def _fetch(app: Flask, options: dict[str, Any] | None = None) -> dict[str, Any]:
     with app.app_context():
         return reminders.fetch(options or {}, {}, ctx={})
+
+
+def test_manifest_declares_list_scoped_change_updates() -> None:
+    manifest = json.loads((Path(__file__).parents[1] / "plugin.json").read_text())
+    assert manifest["updates"]["on_change"] == [
+        {
+            "source": "personal_data.reminders",
+            "selector_option": "list_id",
+        }
+    ]
 
 
 def test_choices_are_loaded_from_snapshot(app: Flask) -> None:

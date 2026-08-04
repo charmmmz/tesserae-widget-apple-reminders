@@ -92,6 +92,14 @@
       ]
     }
   ],
+  "updates": {
+    "on_change": [
+      {
+        "source": "personal_data.reminders",
+        "selector_option": "list_id"
+      }
+    ]
+  },
   "render": {
     "dither": "none",
     "needs_network": false
