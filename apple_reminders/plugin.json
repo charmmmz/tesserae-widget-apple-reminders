@@ -1,7 +1,7 @@
 {
   "tesserae_compat": "1.x",
   "name": "Apple Reminders",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "kind": "widget",
   "requires": [],
   "description": "Render one user-approved Apple Reminders list from the latest expiring Companion snapshot. Choose a list and a Tasks, Food, Shopping, or Custom presentation; the widget never reads Apple data directly and makes no network requests.",
