@@ -46,11 +46,13 @@ Per-cell options include:
 - automatic, one-column, or two-column layout;
 - Tesserae accent color.
 
-The dynamic list picker is populated from the latest `reminders` snapshot. If
-it is empty, the enabled source may currently publish no lists. The widget
-keeps its configured list instead of silently falling back and shows the
-selected-list-unavailable state until that list is published again or another
-one is explicitly chosen.
+The dynamic list picker is populated from every paired Companion's latest
+`reminders` snapshot. With more than one publisher, choices include the paired
+client name (for example, `Alice iPhone · Groceries`) so household lists remain
+distinguishable. If the picker is empty, the enabled source may currently
+publish no lists. The widget keeps its configured list instead of silently
+falling back and shows the selected-list-unavailable state until that list is
+published again or another one is explicitly chosen.
 
 On compatible servers, each placement can independently enable **Refresh when
 this widget's data changes**. The dependency is narrowed to that placement's
@@ -63,9 +65,11 @@ unless explicitly enabled there too.
 The widget is read-only and has no network access. The iPhone remains the data
 authority and uploads only incomplete items from lists the user selected. Each
 list uses an app-generated publication UUID rather than its EventKit calendar
-identifier. Tesserae retains only the latest raw snapshot until its required
-expiry or explicit deletion; ordinary rendered History thumbnails follow the
-server's existing render-cache lifetime.
+identifier. The server derives an opaque publisher identity from each
+authenticated pairing; the snapshot does not expose a new user identity field.
+Tesserae retains only the latest raw snapshot per paired publisher until its
+required expiry or that publisher explicitly deletes it; ordinary rendered
+History thumbnails follow the server's existing render-cache lifetime.
 
 Requires a Tesserae Server advertising `reminders` in
 `personal_data.sources` and a paired Tesserae Companion build that can publish

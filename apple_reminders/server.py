@@ -46,10 +46,31 @@ _PRESETS: dict[str, dict[str, Any]] = {
 }
 
 
-def _record() -> dict[str, Any] | None:
+def _records() -> list[dict[str, Any]]:
     store = current_app.config.get("PERSONAL_DATA_STORE")
-    record = store.get(SOURCE_ID) if store is not None else None
-    return record if isinstance(record, dict) else None
+    if store is None:
+        return []
+    publications = getattr(store, "publications", None)
+    if callable(publications):
+        records = publications(SOURCE_ID)
+        if isinstance(records, list):
+            return [record for record in records if isinstance(record, dict)]
+    record = store.get(SOURCE_ID)
+    return [record] if isinstance(record, dict) else []
+
+
+def _newest_record(records: list[dict[str, Any]]) -> dict[str, Any] | None:
+    if not records:
+        return None
+
+    def sort_epoch(record: dict[str, Any]) -> float:
+        stored = record.get("stored_at")
+        if isinstance(stored, (int, float)):
+            return float(stored)
+        generated = record.get("generated_epoch")
+        return float(generated) if isinstance(generated, (int, float)) else 0.0
+
+    return max(records, key=sort_epoch)
 
 
 def _snapshot_lists(record: dict[str, Any] | None) -> list[dict[str, Any]]:
@@ -62,20 +83,36 @@ def _snapshot_lists(record: dict[str, Any] | None) -> list[dict[str, Any]]:
     if not isinstance(data, dict):
         return []
     lists = data.get("lists")
-    return [entry for entry in lists if isinstance(entry, dict)] if isinstance(lists, list) else []
+    return (
+        [entry for entry in lists if isinstance(entry, dict)]
+        if isinstance(lists, list)
+        else []
+    )
 
 
 def choices(name: str) -> list[dict[str, str]]:
-    """Populate the editor's list picker from the latest uploaded snapshot."""
+    """Populate the editor's list picker from every paired publisher."""
     if name != "lists":
         return []
+    records = _records()
+    publishers_with_lists = {
+        str(record.get("publisher_id") or "legacy")
+        for record in records
+        if _snapshot_lists(record)
+    }
+    show_publisher = len(publishers_with_lists) > 1
     choices_out: list[dict[str, str]] = []
-    for entry in _snapshot_lists(_record()):
-        list_id = str(entry.get("id") or "").strip()
-        title = str(entry.get("title") or "").strip()
-        if list_id and title:
-            choices_out.append({"value": list_id, "label": title})
-    return sorted(choices_out, key=lambda item: (item["label"].casefold(), item["value"]))
+    for record in records:
+        publisher = str(record.get("publisher_name") or "Companion").strip()
+        for entry in _snapshot_lists(record):
+            list_id = str(entry.get("id") or "").strip()
+            title = str(entry.get("title") or "").strip()
+            if list_id and title:
+                label = f"{publisher} · {title}" if show_publisher else title
+                choices_out.append({"value": list_id, "label": label})
+    return sorted(
+        choices_out, key=lambda item: (item["label"].casefold(), item["value"])
+    )
 
 
 def _timestamp_label(generated_epoch: float | None, zone: tzinfo | None = None) -> str:
@@ -141,7 +178,23 @@ def fetch(
     if columns_option not in {"auto", "one", "two"}:
         columns_option = "auto"
 
-    record = _record()
+    records = _records()
+    list_id = str(options.get("list_id") or "").strip()
+    selected_record: dict[str, Any] | None = None
+    selected: dict[str, Any] | None = None
+    for candidate in records:
+        selected = next(
+            (
+                entry
+                for entry in _snapshot_lists(candidate)
+                if str(entry.get("id") or "") == list_id
+            ),
+            None,
+        )
+        if selected is not None:
+            selected_record = candidate
+            break
+    record = selected_record or _newest_record(records)
     now = time.time()
     generated = record.get("generated_epoch") if record else None
     expires = record.get("expires_epoch") if record else None
@@ -154,12 +207,13 @@ def fetch(
         else:
             state = "fresh"
 
-    list_id = str(options.get("list_id") or "").strip()
-    lists = _snapshot_lists(record)
-    selected = next((entry for entry in lists if str(entry.get("id") or "") == list_id), None)
     list_title = str(selected.get("title") or "").strip() if selected else ""
-    title = str(options.get("title") or "").strip() or str(preset["title"] or list_title or "Reminders")
-    count_label = str(options.get("count_label") or "").strip() or str(preset["count_label"])
+    title = str(options.get("title") or "").strip() or str(
+        preset["title"] or list_title or "Reminders"
+    )
+    count_label = str(options.get("count_label") or "").strip() or str(
+        preset["count_label"]
+    )
     accent = str(options.get("accent") or "accent-1")
 
     base: dict[str, Any] = {
@@ -215,7 +269,12 @@ def fetch(
     count = len(items)
     max_items = _int_option(options.get("max_items"))
     shown_items = items[:max_items] if max_items else items
-    columns = 2 if columns_option == "two" or (columns_option == "auto" and len(shown_items) > 5) else 1
+    columns = (
+        2
+        if columns_option == "two"
+        or (columns_option == "auto" and len(shown_items) > 5)
+        else 1
+    )
     return {
         **base,
         "items": shown_items,

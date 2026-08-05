@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Lists published by different paired Companion installations are all
+  available instead of one phone hiding another. When several publishers are
+  present, picker labels include the paired client name, and each selection
+  uses its own snapshot freshness.
+
 ## [0.3.0] - 2026-08-05
 
 ### Added

@@ -25,14 +25,24 @@ def _seed(
     *,
     generated_ago: float = 0,
     ttl_h: float = 47,
-) -> None:
+    publisher_id: str | None = None,
+    publisher_name: str | None = None,
+) -> float:
     now = time.time()
+    generated_epoch = now - generated_ago
+    publisher: dict[str, str] = {}
+    if publisher_id is not None:
+        publisher["publisher_id"] = publisher_id
+    if publisher_name is not None:
+        publisher["publisher_name"] = publisher_name
     app.config["PERSONAL_DATA_STORE"].put(
         "reminders",
         snapshot={"data": {"lists": lists}},
-        generated_epoch=now - generated_ago,
-        expires_epoch=now - generated_ago + ttl_h * 3600,
+        generated_epoch=generated_epoch,
+        expires_epoch=generated_epoch + ttl_h * 3600,
+        **publisher,
     )
+    return generated_epoch
 
 
 def _list(list_id: str, title: str, items: list[dict[str, Any]]) -> dict[str, Any]:
@@ -61,6 +71,35 @@ def test_choices_are_loaded_from_snapshot(app: Flask) -> None:
             {"value": "food", "label": "Grocery List"},
             {"value": "weekend", "label": "Weekend"},
         ]
+
+
+def test_multiple_publishers_are_labeled_and_use_selected_freshness(app: Flask) -> None:
+    alice_generated = _seed(
+        app,
+        [_list("alice-food", "Groceries", [{"title": "Milk", "completed": False}])],
+        generated_ago=3600,
+        publisher_id="alice",
+        publisher_name="Alice iPhone",
+    )
+    _seed(
+        app,
+        [_list("bob-food", "Groceries", [{"title": "Bread", "completed": False}])],
+        generated_ago=60,
+        publisher_id="bob",
+        publisher_name="Bob iPhone",
+    )
+
+    with app.app_context():
+        assert reminders.choices("lists") == [
+            {"value": "alice-food", "label": "Alice iPhone · Groceries"},
+            {"value": "bob-food", "label": "Bob iPhone · Groceries"},
+        ]
+        expected_updated = reminders._timestamp_label(alice_generated)
+
+    data = _fetch(app, {"list_id": "alice-food"})
+
+    assert [item["title"] for item in data["items"]] == ["Milk"]
+    assert data["updated_label"] == expected_updated
 
 
 def test_sync_label_is_an_absolute_timestamp() -> None:
