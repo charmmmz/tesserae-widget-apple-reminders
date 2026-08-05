@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
 
+import pytest
 from flask import Flask
 from flask.testing import FlaskClient
 
@@ -31,11 +32,13 @@ def _seed(
     now = time.time()
     generated_epoch = now - generated_ago
     publisher: dict[str, str] = {}
-    if publisher_id is not None:
-        publisher["publisher_id"] = publisher_id
-    if publisher_name is not None:
-        publisher["publisher_name"] = publisher_name
-    app.config["PERSONAL_DATA_STORE"].put(
+    store = app.config["PERSONAL_DATA_STORE"]
+    if callable(getattr(store, "publications", None)):
+        publisher["publisher_id"] = publisher_id or "test-publisher"
+        publisher["publisher_name"] = publisher_name or "Test iPhone"
+    elif publisher_id is not None or publisher_name is not None:
+        pytest.skip("host server does not support multiple personal-data publishers")
+    store.put(
         "reminders",
         snapshot={"data": {"lists": lists}},
         generated_epoch=generated_epoch,
@@ -196,12 +199,11 @@ def test_stale_and_expired_states(app: Flask) -> None:
 
 
 def test_expired_tombstone_does_not_require_raw_snapshot(app: Flask) -> None:
-    now = time.time()
-    app.config["PERSONAL_DATA_STORE"].put(
-        "reminders",
-        snapshot={"data": {"lists": [_list("food", "Grocery List", [])]}},
-        generated_epoch=now - 50 * 3600,
-        expires_epoch=now - 3 * 3600,
+    _seed(
+        app,
+        [_list("food", "Grocery List", [])],
+        generated_ago=50 * 3600,
+        ttl_h=47,
     )
     record = app.config["PERSONAL_DATA_STORE"].get("reminders")
     assert record is not None
