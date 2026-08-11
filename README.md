@@ -42,6 +42,8 @@ Per-cell options include:
 - custom title and count label;
 - maximum visible items;
 - friendly, relative, or hidden due dates;
+- optional placement-level daily refreshes on compatible Tesserae servers, so
+  relative day labels can advance without requiring a new Companion snapshot;
 - color-coded or quiet urgency marks;
 - automatic, one-column, or two-column layout;
 - Tesserae accent color.

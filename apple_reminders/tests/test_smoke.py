@@ -65,6 +65,9 @@ def test_manifest_declares_list_scoped_change_updates() -> None:
             "selector_option": "list_id",
         }
     ]
+    assert manifest["updates"]["on_schedule"] == [
+        {"kind": "daily", "suggested_at": "07:00"}
+    ]
 
 
 def test_choices_are_loaded_from_snapshot(app: Flask) -> None:
