@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-08-12
+
 ### Added
 
 - Placement-level daily refresh support on compatible Tesserae servers keeps
@@ -54,6 +56,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   documentation coverage: the widget preserves its configured selection and
   shows it as unavailable rather than switching lists.
 
-[Unreleased]: https://github.com/charmmmz/tesserae-widget-apple-reminders/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/charmmmz/tesserae-widget-apple-reminders/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/charmmmz/tesserae-widget-apple-reminders/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/charmmmz/tesserae-widget-apple-reminders/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/charmmmz/tesserae-widget-apple-reminders/releases/tag/v0.2.0
