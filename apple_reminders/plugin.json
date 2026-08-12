@@ -98,6 +98,12 @@
         "source": "personal_data.reminders",
         "selector_option": "list_id"
       }
+    ],
+    "on_schedule": [
+      {
+        "kind": "daily",
+        "suggested_at": "07:00"
+      }
     ]
   },
   "render": {

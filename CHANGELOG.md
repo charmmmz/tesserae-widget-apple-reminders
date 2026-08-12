@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- Placement-level daily refresh support on compatible Tesserae servers keeps
+  relative due-day labels current even when the Reminders snapshot itself has
+  not changed. The default follows the server's local day boundary; `07:00` is
+  offered only as an optional custom-time prefill.
+
 ### Fixed
 
 - Lists published by different paired Companion installations are all
