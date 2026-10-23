@@ -1,10 +1,10 @@
 {
   "tesserae_compat": "1.x",
   "name": "Apple Reminders",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "kind": "widget",
   "requires": [],
-  "description": "Render one user-approved Apple Reminders list from the latest expiring Companion snapshot. Choose a list and a Tasks, Food, Shopping, or Custom presentation; the widget never reads Apple data directly and makes no network requests.",
+  "description": "Render a user-approved Apple Reminders list or Today (due today and overdue across one Companion's synced lists). Choose a Tasks, Food, Shopping, or Custom presentation; the widget never reads Apple data directly and makes no network requests.",
   "icon": "ph-list-checks",
   "supports": {
     "sizes": ["xs", "sm", "md", "lg"]
@@ -13,7 +13,7 @@
     {
       "name": "list_id",
       "type": "select",
-      "label": "Reminders list",
+      "label": "Reminders list / view",
       "choices_from": "lists"
     },
     {
@@ -95,14 +95,13 @@
   "updates": {
     "on_change": [
       {
-        "source": "personal_data.reminders",
-        "selector_option": "list_id"
+        "source": "personal_data.reminders"
       }
     ],
     "on_schedule": [
       {
         "kind": "daily",
-        "suggested_at": "07:00"
+        "suggested_at": "00:00"
       }
     ]
   },

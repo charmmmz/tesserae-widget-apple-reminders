@@ -6,6 +6,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-10-23
+
+### Added
+
+- Today view for each paired Companion, combining incomplete due-today and
+  overdue items from that publisher's explicitly synced lists. Other phones,
+  future dates, undated items, and completed items are excluded. Addresses
+  [#2](https://github.com/charmmmz/tesserae-widget-apple-reminders/issues/2).
+- Next-change hints for local midnight and snapshot freshness/expiry boundaries
+  on compatible hosts. Calendar-day arithmetic handles daylight-saving changes.
+- Explicit empty-Today and unavailable-Companion messages, while retaining
+  per-publisher freshness and never falling back to another phone.
+
+### Changed
+
+- Due-date calculations now use Tesserae's configured app timezone instead of
+  the host/container's implicit local date. The daily custom-time prefill is
+  now `00:00`; existing placement schedules and opt-ins remain unchanged.
+- Change-driven refresh now subscribes to the complete Reminders source so
+  Today responds to changes in any synced list, including list additions and
+  removals. Enabled ordinary-list placements can consequently also refresh
+  after unrelated Reminders changes; the host's current selector contract
+  cannot describe dynamic publisher-wide dependencies.
+
 ## [0.4.0] - 2026-08-12
 
 ### Added
@@ -56,7 +80,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   documentation coverage: the widget preserves its configured selection and
   shows it as unavailable rather than switching lists.
 
-[Unreleased]: https://github.com/charmmmz/tesserae-widget-apple-reminders/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/charmmmz/tesserae-widget-apple-reminders/compare/v0.4.1...HEAD
+[0.4.1]: https://github.com/charmmmz/tesserae-widget-apple-reminders/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/charmmmz/tesserae-widget-apple-reminders/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/charmmmz/tesserae-widget-apple-reminders/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/charmmmz/tesserae-widget-apple-reminders/releases/tag/v0.2.0

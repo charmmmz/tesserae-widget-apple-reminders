@@ -109,7 +109,7 @@ export default function render(shadow, ctx) {
   }
   if (data.reason === "list_required") {
     shadow.innerHTML = framed(
-      `<div class="ar-blank"><i class="ph-bold ph-list-checks"></i><span class="msg">Choose a Reminders list</span><span class="sub">Edit this cell after Companion uploads its selected lists.</span></div>`,
+      `<div class="ar-blank"><i class="ph-bold ph-list-checks"></i><span class="msg">Choose a Reminders list or Today view</span><span class="sub">Edit this cell after Companion uploads its selected lists.</span></div>`,
       " is-muted",
     );
     return;
@@ -121,13 +121,20 @@ export default function render(shadow, ctx) {
     );
     return;
   }
+  if (data.reason === "publisher_missing") {
+    shadow.innerHTML = framed(
+      `<div class="ar-blank"><i class="ph-bold ph-device-mobile"></i><span class="msg">Selected Companion is unavailable</span><span class="sub">Sync Reminders from that Companion or choose another view.</span></div>`,
+      " is-muted",
+    );
+    return;
+  }
 
   const countLabel = countLabelHtml(data.count_label);
   const header = `<div class="ar-head"><div class="ar-count"><span class="ar-num">${data.count ?? 0}</span><span class="ar-lab">${countLabel}</span></div><div class="ar-meta"><span class="ar-title">${escapeHtml(data.title || "Reminders")}</span>${stateBadge(data.state, data.updated_label)}</div></div>`;
   const stateClasses = `${data.state === "stale" ? " is-dim" : ""}${data.urgency_colors ? " use-urgency-colors" : ""}${data.due_style === "relative" ? " due-relative" : ""}`;
   if (data.empty) {
     shadow.innerHTML = framed(
-      `${header}<div class="ar-blank"><i class="ph-bold ph-check-circle"></i><span class="msg">Nothing left on this list</span></div>`,
+      `${header}<div class="ar-blank"><i class="ph-bold ph-check-circle"></i><span class="msg">${data.view === "today" ? "Nothing due today" : "Nothing left on this list"}</span></div>`,
       stateClasses,
     );
     return;

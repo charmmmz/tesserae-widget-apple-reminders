@@ -2,7 +2,9 @@
 
 A general Apple Reminders widget backed by Tesserae Companion's private,
 expiring multi-list snapshot. Choose any list the iPhone has explicitly
-published, then present it as Tasks, Food, Shopping, or a custom checklist.
+published, or choose **Today (all synced lists)** for one Companion's due-today
+and overdue tasks. Present either view as Tasks, Food, Shopping, or a custom
+checklist.
 
 This repository is derived from Kayden D'Mello's
 [Reminders, Fridge](https://github.com/dmellok/tesserae-widget-reminders-fridge)
@@ -37,7 +39,7 @@ different one.
 
 Per-cell options include:
 
-- uploaded Reminders list;
+- uploaded Reminders list or a Companion's Today view;
 - presentation preset;
 - custom title and count label;
 - maximum visible items;
@@ -51,16 +53,56 @@ Per-cell options include:
 The dynamic list picker is populated from every paired Companion's latest
 `reminders` snapshot. With more than one publisher, choices include the paired
 client name (for example, `Alice iPhone · Groceries`) so household lists remain
-distinguishable. If the picker is empty, the enabled source may currently
+distinguishable. Each publisher with synced lists also has a **Today (all
+synced lists)** choice. If the picker is empty, the enabled source may currently
 publish no lists. The widget keeps its configured list instead of silently
 falling back and shows the selected-list-unavailable state until that list is
 published again or another one is explicitly chosen.
 
-On compatible servers, each placement can independently enable **Refresh when
-this widget's data changes**. The dependency is narrowed to that placement's
-selected list, so changing Grocery List does not refresh a dashboard showing a
-different Reminders list, and the same widget on another dashboard remains off
-unless explicitly enabled there too.
+### Today
+
+Select **Today (all synced lists)** in **Reminders list / view**. With several
+paired phones, choose the entry bearing the intended phone's name. Today
+combines only that publisher's synced lists and includes incomplete items
+whose valid due date is today or earlier; future, undated, invalid-date, and
+completed items are excluded. The count and item limit apply after filtering.
+Renaming or removing an individual list does not change the selected publisher.
+If that publisher's synced source is deleted, the widget reports it as
+unavailable instead of switching to another phone. A snapshot that explicitly
+publishes no lists produces an empty Today view.
+
+Today and all due labels use **Settings → App → Timezone**, including when the
+host/container runs in UTC. Date-only snapshot values are interpreted as
+calendar dates in that zone. They are not shifted through UTC. The snapshot
+does not carry the phone's timezone or exact due times, so use the intended
+timezone in Tesserae when comparing with the iPhone's Today view.
+
+On compatible servers, enable these host-owned options for the placement:
+
+- **Refresh when this widget's data changes** to refresh after Companion
+  publishes changes. The dependency covers the entire `personal_data.reminders`
+  source so edits, completions, newly synced lists, and removed lists all reach
+  Today. This also means an ordinary-list placement with the option enabled
+  can refresh for changes to another list or publisher: the current host
+  contract cannot express a publisher's dynamic set of list dependencies.
+- **Daily refresh** with the default local day boundary to update at midnight
+  without another Companion upload. If selecting a custom time, use `00:00`
+  for the same behavior; an existing custom time is not overwritten.
+
+Current servers also consume the widget's `next_change_at` hint at the next
+local midnight (accounting for daylight-saving changes), or earlier if the
+snapshot becomes stale or expires. Older hosts may ignore that hint; the
+placement's daily refresh remains the fallback. Scheduling follows the host's
+normal quiet-hours, device polling, and server-restart behavior; it is not a
+guarantee that every physical display updates at exactly midnight. Each
+placement's opt-ins remain independent and off by default.
+
+Today is derived from the latest uploaded snapshot, not a live read of the
+iPhone's built-in Smart List. Only lists explicitly selected in Companion
+participate, with the existing maximum of 20 lists and 200 incomplete items per
+snapshot. Unsynced or truncated items cannot appear, and completions made on
+the phone require a new Companion sync. Fresh, stale, expired, and unavailable
+states continue to reflect the selected publisher's own snapshot.
 
 ## Privacy and data flow
 
